@@ -82,7 +82,8 @@ def cmd_real(args):
     os.makedirs("results", exist_ok=True)
     with open("results/holdout.json", "w") as fh:
         json.dump(rep, fh, indent=2)
-    print("synthetic holdout:", json.dumps(rep))
+    print("synthetic holdout: AUC %.3f  Brier %.3f  ECE %.3f  base %.3f  backend %s" % (
+        rep["auc"], rep["brier"], rep["ece"], rep["base_rate"], rep["backend"]))
 
     # Refit on everything before touching real data.
     m = GhostModel(random_state=args.seed).fit(X, y)

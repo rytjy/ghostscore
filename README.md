@@ -15,6 +15,15 @@ Built for **Hacktoberfest Open-Source AI Challenge · Week 4: Ghost in the Machi
 - **Is not**: a market predictor. Labels come from a generator, so calibration is
   only claimed **against that generator**.
 
+## Demo
+
+![ghostscore demo](results/demo.gif)
+
+A real terminal recording, not a mock: it trains on 300 synthetic strategies,
+then scores 29 configs from the archive. Regenerate it with
+`python3 scripts/record_demo.py` (captures stdout and its timestamps, renders
+the GIF with Pillow; no ffmpeg needed).
+
 ## Results
 
 ### Synthetic (holdout, n=270, 900–1900 bars)
@@ -58,10 +67,12 @@ never sees it. n=29 is small and the configs were not pre-registered.
 - [x] synthetic market + strategy population (gated and ungated)
 - [x] scale-free in-sample features (no OOS leakage)
 - [x] fixed-bin calibration + ECE
-- [x] TabPFN path with gradient-boosting fallback
 - [x] real-config scoring from the archive (29 configs)
-- [ ] TabPFN installed on this host (CPU torch download in progress)
-- [ ] article draft
+- [x] terminal demo GIF, regenerated from a real run
+- [ ] TabPFN backend installed on this host (CPU torch download fails with read
+      timeouts; the code path exists but every published number says
+      `backend=sklearn-hgb`)
+- [ ] article
 
 ## Run
 
@@ -69,15 +80,16 @@ never sees it. n=29 is small and the configs were not pre-registered.
 python3 -m ghostscore.cli run  --n 1500 --seed 7     # synthetic only
 python3 -m ghostscore.cli real --n 900  --seed 7     # score real configs
 python3 scripts/plot_calibration.py results/holdout.json
+python3 scripts/record_demo.py                       # rebuild the GIF
 PYTHONPATH=. python3 tests/test_smoke.py
 ```
 
 ## Why TabPFN
 
 TabPFN is a tabular foundation model: few-shot classification without a training
-loop, on CPU, with no data leaving the machine. It also puts the project in the
-**Best Use of TabPFN** partner category. Until its install lands, every reported
-number says `backend=sklearn-hgb` rather than pretending.
+loop, on CPU, with no data leaving the machine. The code path is implemented
+(`ghostscore/model.py`), but the install did not complete on this host, so no
+number here is attributed to it.
 
 ## License
 

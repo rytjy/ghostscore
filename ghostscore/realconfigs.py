@@ -94,17 +94,19 @@ def score_configs(model, X_cols_order):
                      "is_bars": len(is_pnl)})
 
     for label, f, s, sig in CONFIGS:
+        clean = label.replace(" (教科书默认)", " (default)")
         for gate in (False, True):
             pnl, turn = macd_pnl(closes, f, s, sig, gate)
-            add("MACD", label + (" +gate" if gate else ""), pnl, turn)
+            add("MACD", clean + (" +gate" if gate else ""), pnl, turn)
 
     fam_fns = {"Donchian": p_donchian, "Bollinger": p_boll, "RSI反转": p_rsi2,
                "时序动量": p_tsmom, "AO": p_ao}
+    english = {"RSI反转": "RSI-rev", "时序动量": "TSMOM"}
     for fam, grids, _ in FAMILIES:
         fn = fam_fns[fam]
         for params in grids:
             pnl, turn = fam_pnl(ohlc, fn, params)
-            add(fam, str(params), pnl, turn)
+            add(english.get(fam, fam), str(params), pnl, turn)
 
     X = np.asarray([r["feat"] for r in rows], float)
     p = model.predict_proba(X)
